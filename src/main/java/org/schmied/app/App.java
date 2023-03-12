@@ -55,7 +55,9 @@ public abstract class App {
 		}
 		db = initDb;
 		initDb();
+	}
 
+	public void startScheduler() {
 		SundialJobScheduler.startScheduler(prop.keyPrefix());
 	}
 

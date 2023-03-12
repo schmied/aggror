@@ -16,6 +16,12 @@ public class Aggror extends App {
 
 	// ---
 
+//	public static final float GOLDEN_RATIO_0 = 0.618033988749f;
+//	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
+//
+//	private static final int HOURS_PER_INTERVAL = 6;
+//	private static final int SECONDS_PER_INTERVAL = 60 * 60 * HOURS_PER_INTERVAL;
+
 	public final SortedMap<String, Integer> tagPriorities;
 	public final SortedSet<Site> sites;
 
@@ -39,6 +45,8 @@ public class Aggror extends App {
 		for (final Site site : sites)
 			log.info("{}", site.toString());
 
+		startScheduler();
+
 		ServerHandler.startServer();
 	}
 
@@ -48,9 +56,16 @@ public class Aggror extends App {
 
 	@Override
 	public void initDb() throws Exception {
-		db.execute("CREATE TABLE IF NOT EXISTS article (time SMALLINT NOT NULL, site SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, heading TEXT)");
-		db.execute("CREATE INDEX IF NOT EXISTS time_idx ON article USING btree (time)");
-		db.execute("CREATE INDEX IF NOT EXISTS site_idx ON article USING btree (site)");
-		db.execute("CREATE INDEX IF NOT EXISTS url_hash_idx ON article USING btree (url_hash)");
+
+		// site
+		db.update("CREATE TABLE IF NOT EXISTS site (site_id SMALLSERIAL PRIMARY KEY, name TEXT)");
+		db.update("CREATE INDEX IF NOT EXISTS site_name_idx ON site USING btree (name)");
+
+		// article
+		db.update("CREATE TABLE IF NOT EXISTS article (time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, heading TEXT," //
+				+ " CONSTRAINT article_site_fk FOREIGN KEY(site_id) REFERENCES site(site_id))");
+		db.update("CREATE INDEX IF NOT EXISTS article_time_idx ON article USING btree (time)");
+		db.update("CREATE INDEX IF NOT EXISTS article_site_id_idx ON article USING btree (site_id)");
+		db.update("CREATE INDEX IF NOT EXISTS article_url_hash_idx ON article USING btree (url_hash)");
 	}
 }

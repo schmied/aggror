@@ -20,7 +20,7 @@ public class Log {
 		sb.append('\n');
 		for (final StackTraceElement ste : e.getStackTrace()) {
 			sb.append("        at ");
-			sb.append(ste.getClassName().replaceAll(".*\\.", ""));
+			sb.append(ste.getClassName());
 			sb.append('.');
 			sb.append(ste.getMethodName());
 			sb.append('(');

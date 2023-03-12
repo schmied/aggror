@@ -10,11 +10,11 @@ public class Db {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Db.class);
 
 	public final Connection connection;
-	private final SortedMap<String, PreparedStatement> statements;
+	//private final SortedMap<String, PreparedStatement> statements;
 
 	public Db(final String url, final String username, final String password) throws Exception {
 		connection = DriverManager.getConnection(url, username, password);
-		statements = new TreeMap<>();
+		//statements = new TreeMap<>();
 		LOGGER.info(toString());
 	}
 
@@ -33,7 +33,16 @@ public class Db {
 		}
 	}
 
-	public void execute(final String... sqls) throws Exception {
+	public void update(final String... sqls) throws Exception {
+		try (final Statement st = connection.createStatement()) {
+			for (final String sql : sqls)
+				st.executeUpdate(sql);
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+
+	public void update(final Collection<String> sqls) throws Exception {
 		try (final Statement st = connection.createStatement()) {
 			for (final String sql : sqls)
 				st.execute(sql);
@@ -42,13 +51,45 @@ public class Db {
 		}
 	}
 
-	public void execute(final Collection<String> sqls) throws Exception {
+/*
+	public ResultSet query(final String sql) throws Exception {
 		try (final Statement st = connection.createStatement()) {
-			for (final String sql : sqls)
-				st.execute(sql);
+			return st.executeQuery(sql);
 		} catch (final Exception e) {
 			throw e;
 		}
+	}
+*/
+
+	public <T> T queryObject(final String sql, final Class<T> c) throws Exception {
+		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+			if (rs.next())
+				return rs.getObject(1, c);
+			return null;
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+
+	public String queryString(final String sql) throws Exception {
+		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+			if (rs.next())
+				return rs.getString(1);
+			return null;
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+
+	public String[] queryStrings(final String sql) throws Exception {
+		final List<String> result = new ArrayList<>();
+		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+			while (rs.next())
+				result.add(rs.getString(1));
+		} catch (final Exception e) {
+			throw e;
+		}
+		return result.toArray(new String[result.size()]);
 	}
 
 	public void close() {

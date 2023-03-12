@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
-import org.schmied.app.App;
+import org.schmied.app.*;
 import org.slf4j.*;
 
 public class Site implements Comparable<Site> {
@@ -24,12 +24,14 @@ public class Site implements Comparable<Site> {
 
 	// ---
 
+	public final Short id;
 	public final String name, language;
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
 
 	private Site(final String name, final SortedMap<String, Object> subProps) throws Exception {
 		this.name = name;
+		this.id = id(this.name);
 		this.language = subProps.get(SUBPROP_LANG).toString().trim();
 		this.startPages = new TreeSet<>();
 		this.startPages.add("https://" + this.name + "/");
@@ -63,8 +65,20 @@ public class Site implements Comparable<Site> {
 			}
 		}
 
-		LOGGER.info("site {} language {} startPages {} regexMath {} regexNomatch {}", name, language, startPages.toString(), regexMatchs.keySet().toString(),
+		LOGGER.info("site:{} id:{} language:{} startPages:{} regexMath:{} regexNomatch:{}", name, id, language, startPages.toString(), regexMatchs.keySet().toString(),
 				regexNoMatchs.keySet().toArray());
+	}
+
+	private static Short id(final String name) throws Exception {
+		final Db db = App.app().db;
+		final String query = "SELECT site_id FROM site WHERE name = '" + name + "'";
+		Short id = db.queryObject(query, Short.class);
+		if (id == null)
+			db.update("INSERT INTO site (name) VALUES ('" + name + "')");
+		id = db.queryObject(query, Short.class);
+		if (id == null)
+			throw new Exception();
+		return id;
 	}
 
 	public static SortedSet<Site> sites(final SortedMap<String, String> props) throws Exception {

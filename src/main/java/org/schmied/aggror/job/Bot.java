@@ -9,7 +9,9 @@ import org.schmied.aggror.*;
 import org.schmied.app.Log;
 import org.slf4j.*;
 
-@SimpleTrigger(repeatInterval = 13350, timeUnit = TimeUnit.SECONDS)
+// repeatInterval: (1.0f - GOLDEN_RATIO_0) * SECONDS_PER_INTERVAL
+
+@SimpleTrigger(repeatInterval = 8250, timeUnit = TimeUnit.SECONDS)
 public class Bot extends Job {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);

@@ -92,7 +92,7 @@ public class Prop {
 	}
 
 	private static void load(final SortedMap<String, String> props, final String filenameSuffix) {
-		final Path file = Paths.get("properties" + filenameSuffix);
+		final Path file = Paths.get("properties" + (filenameSuffix == null ? "" : filenameSuffix));
 		if (Files.isRegularFile(file)) {
 			LOGGER.debug("Read property file " + file.toAbsolutePath());
 			try (final InputStream is = Files.newInputStream(file)) {
@@ -112,6 +112,7 @@ public class Prop {
 		} catch (final Exception e) {
 			App.exit(1, new Exception("Cannot read application properties.", e));
 		}
+		load(props, (String) null);
 		load(props, "." + System.getProperty("user.name"));
 		return props;
 	}

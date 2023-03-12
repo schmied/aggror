@@ -7,9 +7,9 @@
 			<property name="org.schmied.log.dir" value="${TAKWA_ROOT}/Logs" />
 		</then>
 	</if>
-	<property file="Properties" />
-	<property file="Properties_${HOSTNAME}" />
-	<property file="Properties.${user.name}" />
+	<property file="properties" />
+	<property file="properties_${HOSTNAME}" />
+	<property file="properties.${user.name}" />
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<charset>UTF-8</charset>
