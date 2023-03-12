@@ -1,7 +1,11 @@
 
+org.schmied.aggror.dir = 
+
 org.schmied.aggror.db.url      = jdbc:postgresql:aggror  
 org.schmied.aggror.db.username = aggror
 org.schmied.aggror.db.password = aggror
+
+org.schmied.aggror.tagPriority = #root h1 h2 h3 h4 h5 h6 img > ul ol li > p > div
 
 #org.schmied.aggror.site.reuters.com.lang        = en
 #org.schmied.aggror.site.reuters.com.regexMatch  = ^business/.* ^breakingviews/.* ^markets/.* ^world/.*
@@ -12,5 +16,3 @@ org.schmied.aggror.site.spiegel.de.regexNoMatch = .*-amp\\.html$ .*-amp$
 
 #org.schmied.aggror.site.nzz.ch.lang             = de
 #org.schmied.aggror.site.nzz.ch.regexMatch       = ^feuilleton/.* ^finanzen/.* ^international/.* ^meinung/.* ^neueste-artikel/.* ^panorama/.* ^schweiz/.* ^wirtschaft/.*
-
-org.schmied.aggror.tagPriority = #root h1 h2 h3 h4 h5 h6 img > ul ol li > p > div

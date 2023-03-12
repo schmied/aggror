@@ -16,17 +16,11 @@ public class Site implements Comparable<Site> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Site.class);
 
-	public static final String PROP_PREFIX_SITE = "site.";
-
 	private static final String SUBPROP_LANG = "lang";
 	private static final String SUBPROP_REGEX_MATCH = "regexMatch";
 	private static final String SUBPROP_REGEX_NOMATCH = "regexNoMatch";
 
-	private static final Path PATH_DATA_DIR = Paths.get("C:\\Users\\schmied\\Desktop\\aggror");
-
 	private static final int MIN_ARTICLE_SIZE = 1000;
-
-//	public static final SortedSet<Site> SITES = sites();
 
 	// ---
 
@@ -34,7 +28,7 @@ public class Site implements Comparable<Site> {
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
 
-	public Site(final String name, final SortedMap<String, Object> subProps) throws Exception {
+	private Site(final String name, final SortedMap<String, Object> subProps) throws Exception {
 		this.name = name;
 		this.language = subProps.get(SUBPROP_LANG).toString().trim();
 		this.startPages = new TreeSet<>();
@@ -73,11 +67,6 @@ public class Site implements Comparable<Site> {
 				regexNoMatchs.keySet().toArray());
 	}
 
-//	@Override
-//	public String toString() {
-//		return "site " + name + " " + language + " " + startPages.toString() + " " + regexMatchs.keySet().toString() + " " + regexNoMatchs.keySet().toString();
-//	}
-
 	public static SortedSet<Site> sites(final SortedMap<String, String> props) throws Exception {
 		final SortedMap<String, SortedMap<String, Object>> subPropsBySite = new TreeMap<>();
 		for (final String key : props.keySet()) {
@@ -95,35 +84,6 @@ public class Site implements Comparable<Site> {
 		for (final String site : subPropsBySite.keySet())
 			sites.add(new Site(site, subPropsBySite.get(site)));
 		return sites;
-
-		/*
-		try {
-			final Properties p = new Properties();
-			try (final InputStream is = Site.class.getResourceAsStream("/properties")) {
-				p.load(is);
-			}
-			final SortedMap<String, SortedMap<String, Object>> subPropsBySite = new TreeMap<>();
-			final String propPrefix = Config.PROP_PREFIX + PROP_PREFIX_SITE;
-			for (final Object k : p.keySet()) {
-				if (!k.toString().startsWith(propPrefix))
-					continue;
-				final String key = k.toString().replace(propPrefix, "");
-				final int idx = key.lastIndexOf('.');
-				final String site = key.substring(0, idx);
-				SortedMap<String, Object> subProps = subPropsBySite.get(site);
-				if (subProps == null) {
-					subProps = new TreeMap<>();
-					subPropsBySite.put(site, subProps);
-				}
-				final String subPropKey = key.substring(idx + 1);
-				subProps.put(subPropKey, p.get(k));
-			}
-			for (final String site : subPropsBySite.keySet())
-				sites.add(new Site(site, subPropsBySite.get(site)));
-		} catch (final Exception e) {
-			LOGGER.warn(e.toString());
-		}
-		*/
 	}
 
 	@Override
@@ -161,7 +121,7 @@ public class Site implements Comparable<Site> {
 	}
 
 	private Path path() {
-		return PATH_DATA_DIR.resolve(language).resolve(name);
+		return App.app().dir.resolve(language).resolve(name);
 	}
 
 	private Path path(final URL url, final String dir, final String suffix) {

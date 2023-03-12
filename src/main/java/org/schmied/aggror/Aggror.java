@@ -2,7 +2,7 @@ package org.schmied.aggror;
 
 import java.util.*;
 
-import org.schmied.app.App;
+import org.schmied.app.*;
 
 public class Aggror extends App {
 
@@ -23,12 +23,11 @@ public class Aggror extends App {
 			}
 			idx++;
 		}
+		log.info("{}", tagPriorities);
 
 		sites = Site.sites(prop.getMapOfString("site"));
 		for (final Site site : sites)
 			log.info("{}", site.toString());
-
-		log.info("{}", tagPriorities);
 
 		ServerHandler.startServer();
 	}
@@ -40,13 +39,8 @@ public class Aggror extends App {
 	public static void main(final String[] args) {
 		try {
 			final Aggror app = new Aggror();
-
-//		for (final Site site : Site.SITES) {
-//			site.download();
-//		}
-			//ServerHandler.startServer();
-
 		} catch (final Exception e) {
+			Log.warn(log(), e);
 			App.exit(1, e.getMessage());
 		}
 	}

@@ -1,5 +1,6 @@
 package org.schmied.app;
 
+import java.nio.file.*;
 import java.util.SortedMap;
 
 import org.knowm.sundial.SundialJobScheduler;
@@ -18,6 +19,7 @@ public abstract class App {
 	public final String name;
 	public final Prop prop;
 	public final Db db;
+	public final Path dir;
 
 	public App() throws Exception {
 		if (APP != null)
@@ -32,10 +34,13 @@ public abstract class App {
 		try {
 			initProp = new Prop(propKeyPrefix);
 		} catch (final Exception e) {
+			Log.warn(log, e);
 			exit(1, e.getMessage());
 		}
 		prop = initProp;
-		log.info("Properties:\n{}", prop.toString(1, 32));
+		log.info("Properties:\n{}", prop.toString(2, 32));
+
+		dir = Paths.get(prop.get("dir")).toAbsolutePath();
 
 		final SortedMap<String, String> propDb = prop.getMapOfString("db");
 		if (propDb.size() != 3)
@@ -45,6 +50,7 @@ public abstract class App {
 		try {
 			initDb = new Db(propDb);
 		} catch (final Exception e) {
+			Log.warn(log, e);
 			exit(1, e.getMessage());
 		}
 		db = initDb;

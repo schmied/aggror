@@ -7,7 +7,7 @@ import org.slf4j.*;
 
 public class Db {
 
-	private final Logger log = LoggerFactory.getLogger(Db.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Db.class);
 
 	public final Connection connection;
 	private final SortedMap<String, PreparedStatement> statements;
@@ -51,7 +51,7 @@ public class Db {
 		try {
 			connection.close();
 		} catch (final Exception e) {
-			log.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 		}
 	}
 }

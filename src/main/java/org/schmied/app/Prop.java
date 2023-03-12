@@ -2,10 +2,15 @@ package org.schmied.app;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import org.slf4j.*;
+
 public class Prop {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Prop.class);
 
 	public static final Prop ALL = new Prop();
 
@@ -53,11 +58,8 @@ public class Prop {
 		return keyPrefix;
 	}
 
-	private static SortedMap<String, String> load() {
-		final SortedMap<String, String> props = new TreeMap<>();
-		try (final InputStream is = Prop.class.getResourceAsStream("/properties");
-				final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-				final BufferedReader br = new BufferedReader(isr, 1024)) {
+	private static void load(final SortedMap<String, String> props, final InputStream is) throws Exception {
+		try (final InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8); final BufferedReader br = new BufferedReader(isr, 1024)) {
 			int lineNo = 0;
 			String line;
 			final Pattern patKey = Pattern.compile(PAT_KEY_REGEX);
@@ -85,8 +87,34 @@ public class Prop {
 				props.put(key, value);
 			}
 		} catch (final Exception e) {
-			App.exit(1, "Cannot read properties: " + e.getMessage());
+			throw e;
 		}
+	}
+
+	private static void load(final SortedMap<String, String> props, final String filenameSuffix) {
+		final Path file = Paths.get("properties" + filenameSuffix);
+		if (Files.isRegularFile(file)) {
+			LOGGER.info("Read property file " + file.toAbsolutePath());
+			try (final InputStream is = Files.newInputStream(file)) {
+				load(props, is);
+			} catch (final Exception e) {
+				Log.warn(LOGGER, new Exception("Cannot read property file " + file.toAbsolutePath().toString(), e));
+				App.exit(1, "Cannot read '" + file.toAbsolutePath().toString() + "': " + e.getMessage());
+			}
+		} else {
+			LOGGER.info("No property file " + file.toAbsolutePath());
+		}
+	}
+
+	private static SortedMap<String, String> load() {
+		final SortedMap<String, String> props = new TreeMap<>();
+		try (final InputStream is = Prop.class.getResourceAsStream("/properties")) {
+			load(props, is);
+		} catch (final Exception e) {
+			Log.warn(LOGGER, new Exception("Cannot read application properties.", e));
+			App.exit(1, "Cannot read application properties: " + e.getMessage());
+		}
+		load(props, "." + System.getProperty("user.name"));
 		return props;
 	}
 
