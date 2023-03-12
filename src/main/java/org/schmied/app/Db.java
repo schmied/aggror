@@ -15,6 +15,7 @@ public class Db {
 	public Db(final String url, final String username, final String password) throws Exception {
 		connection = DriverManager.getConnection(url, username, password);
 		statements = new TreeMap<>();
+		LOGGER.info(toString());
 	}
 
 	public Db(final SortedMap<String, String> props) throws Exception {
@@ -23,7 +24,13 @@ public class Db {
 
 	@Override
 	public String toString() {
-		return "DB TO STRING";
+		try {
+			final DatabaseMetaData md = connection.getMetaData();
+			return md.getDatabaseProductName() + " " + md.getDatabaseProductVersion() + " (" + md.getDriverName() + " " + md.getDriverVersion() + ")";
+		} catch (final Exception e) {
+			Log.warn(LOGGER, e);
+			return "<error receiving database information>";
+		}
 	}
 
 	public void execute(final String... sqls) throws Exception {

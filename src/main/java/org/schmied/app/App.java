@@ -45,7 +45,7 @@ public abstract class App {
 
 		final SortedMap<String, String> propDb = prop.getMapOfString("db");
 		if (propDb.size() != 3)
-			throw new Exception("DB properties must only define exactly: url, username, and password.");
+			exit(1, new Exception("DB properties must only define exactly: url, username, and password."));
 
 		Db initDb = null;
 		try {
@@ -54,7 +54,6 @@ public abstract class App {
 			exit(1, e);
 		}
 		db = initDb;
-		log.info("DB: {}", db.toString());
 		initDb();
 
 		SundialJobScheduler.startScheduler(prop.keyPrefix());
@@ -70,8 +69,7 @@ public abstract class App {
 	}
 
 	public static void exit(final int status, final String message) {
-		System.err.println(message);
-		System.err.println("Terminate application.");
+		System.err.println("\n\n" + message + "\n\nTerminate application.\n");
 		System.exit(status);
 	}
 

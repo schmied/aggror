@@ -94,7 +94,7 @@ public class Prop {
 	private static void load(final SortedMap<String, String> props, final String filenameSuffix) {
 		final Path file = Paths.get("properties" + filenameSuffix);
 		if (Files.isRegularFile(file)) {
-			LOGGER.info("Read property file " + file.toAbsolutePath());
+			LOGGER.debug("Read property file " + file.toAbsolutePath());
 			try (final InputStream is = Files.newInputStream(file)) {
 				load(props, is);
 			} catch (final Exception e) {
@@ -116,7 +116,7 @@ public class Prop {
 		return props;
 	}
 
-	private static final SortedMap<String, String> getMapOfString(final SortedMap<String, String> props, final String keyPrefix) throws Exception {
+	private static SortedMap<String, String> getMapOfString(final SortedMap<String, String> props, final String keyPrefix) throws Exception {
 		final String keyFrom = keyPrefix + ".";
 		final String keyTo = keyPrefix + "/";
 		final SortedMap<String, String> mapSub = props.subMap(keyFrom, keyTo);
