@@ -1,0 +1,51 @@
+<configuration>
+	<property name="org.schmied.log.level" value="INFO" />
+	<property name="org.schmied.log.pattern" value="%date{yy-MM-dd HH:mm:ss} %-5level %-40logger{32} %message%n" />
+	<property name="org.schmied.log.dir" value="/takwa/log" />
+	<if condition='property("os.name").toLowerCase().startsWith("windows")'>
+		<then>
+			<property name="org.schmied.log.dir" value="${TAKWA_ROOT}/Logs" />
+		</then>
+	</if>
+	<property file="Properties" />
+	<property file="Properties_${HOSTNAME}" />
+	<property file="Properties.${user.name}" />
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${org.schmied.log.pattern}</pattern>
+		</encoder>
+	</appender>
+	<if condition='property("org.schmied.log.file").equals("")'>
+		<then></then>
+		<else>
+			<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>${org.schmied.log.dir}/${org.schmied.log.file}</file>
+				<encoder>
+					<charset>UTF-8</charset>
+					<pattern>${org.schmied.log.pattern}</pattern>
+				</encoder>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<maxFileSize>100MB</maxFileSize>
+				</triggeringPolicy>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<fileNamePattern>${org.schmied.log.dir}/${org.schmied.log.file}.%i</fileNamePattern>
+					<minIndex>1</minIndex>
+					<maxIndex>9</maxIndex>
+				</rollingPolicy>
+			</appender>
+		</else>
+	</if>
+	<if condition='property("org.schmied.log.file").equals("")'>
+		<then>
+			<root level="${org.schmied.log.level}">
+				<appender-ref ref="CONSOLE" />
+			</root>
+		</then>
+		<else>
+			<root level="${org.schmied.log.level}">
+				<appender-ref ref="FILE" />
+			</root>
+		</else>
+	</if>
+</configuration>
