@@ -31,7 +31,7 @@ public class Log {
 			sb.append('\n');
 		}
 		if (e.getCause() != null)
-			warn(sb, e.getCause(), idxException, idxCause);
+			warn(sb, e.getCause(), idxException, idxCause + 1);
 	}
 
 	public static void warn(final Logger logger, final Collection<Throwable> exceptions) {

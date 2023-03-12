@@ -44,9 +44,6 @@ public class Db {
 		}
 	}
 
-	public void commit() {
-	}
-
 	public void close() {
 		try {
 			connection.close();

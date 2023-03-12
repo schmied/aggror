@@ -34,13 +34,14 @@ public abstract class App {
 		try {
 			initProp = new Prop(propKeyPrefix);
 		} catch (final Exception e) {
-			Log.warn(log, e);
-			exit(1, e.getMessage());
+			exit(1, e);
 		}
 		prop = initProp;
 		log.info("Properties:\n{}", prop.toString(2, 32));
 
 		dir = Paths.get(prop.get("dir")).toAbsolutePath();
+		if (!Files.isDirectory(dir) || !Files.isWritable(dir))
+			exit(1, new Exception("No writable application directory " + dir.toString()));
 
 		final SortedMap<String, String> propDb = prop.getMapOfString("db");
 		if (propDb.size() != 3)
@@ -50,8 +51,7 @@ public abstract class App {
 		try {
 			initDb = new Db(propDb);
 		} catch (final Exception e) {
-			Log.warn(log, e);
-			exit(1, e.getMessage());
+			exit(1, e);
 		}
 		db = initDb;
 		log.info("DB: {}", db.toString());
@@ -73,6 +73,11 @@ public abstract class App {
 		System.err.println(message);
 		System.err.println("Terminate application.");
 		System.exit(status);
+	}
+
+	public static void exit(final int status, final Throwable exception) {
+		Log.warn(Log.ROOT, exception);
+		exit(status, exception.getMessage());
 	}
 
 	public void close() {

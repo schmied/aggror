@@ -98,8 +98,7 @@ public class Prop {
 			try (final InputStream is = Files.newInputStream(file)) {
 				load(props, is);
 			} catch (final Exception e) {
-				Log.warn(LOGGER, new Exception("Cannot read property file " + file.toAbsolutePath().toString(), e));
-				App.exit(1, "Cannot read '" + file.toAbsolutePath().toString() + "': " + e.getMessage());
+				App.exit(1, new Exception("Cannot read property file " + file.toAbsolutePath().toString(), e));
 			}
 		} else {
 			LOGGER.info("No property file " + file.toAbsolutePath());
@@ -111,8 +110,7 @@ public class Prop {
 		try (final InputStream is = Prop.class.getResourceAsStream("/properties")) {
 			load(props, is);
 		} catch (final Exception e) {
-			Log.warn(LOGGER, new Exception("Cannot read application properties.", e));
-			App.exit(1, "Cannot read application properties: " + e.getMessage());
+			App.exit(1, new Exception("Cannot read application properties.", e));
 		}
 		load(props, "." + System.getProperty("user.name"));
 		return props;

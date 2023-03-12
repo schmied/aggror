@@ -2,9 +2,19 @@ package org.schmied.aggror;
 
 import java.util.*;
 
-import org.schmied.app.*;
+import org.schmied.app.App;
 
 public class Aggror extends App {
+
+	public static void main(final String[] args) {
+		try {
+			final Aggror app = new Aggror();
+		} catch (final Exception e) {
+			exit(1, e);
+		}
+	}
+
+	// ---
 
 	public final SortedMap<String, Integer> tagPriorities;
 	public final SortedSet<Site> sites;
@@ -34,15 +44,6 @@ public class Aggror extends App {
 
 	public static Aggror app() {
 		return App.app();
-	}
-
-	public static void main(final String[] args) {
-		try {
-			final Aggror app = new Aggror();
-		} catch (final Exception e) {
-			Log.warn(log(), e);
-			App.exit(1, e.getMessage());
-		}
 	}
 
 	@Override
