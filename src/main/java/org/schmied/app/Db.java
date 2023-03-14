@@ -51,7 +51,6 @@ public class Db {
 		}
 	}
 
-/*
 	public ResultSet query(final String sql) throws Exception {
 		try (final Statement st = connection.createStatement()) {
 			return st.executeQuery(sql);
@@ -59,7 +58,6 @@ public class Db {
 			throw e;
 		}
 	}
-*/
 
 	public <T> T queryObject(final String sql, final Class<T> c) throws Exception {
 		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {

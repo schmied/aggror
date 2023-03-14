@@ -100,9 +100,11 @@ public class Site implements Comparable<Site> {
 		return sites;
 	}
 
+	// ---
+
 	@Override
 	public int hashCode() {
-		return name.hashCode() ^ 0x01234567;
+		return id.intValue();
 	}
 
 	@Override
@@ -118,6 +120,13 @@ public class Site implements Comparable<Site> {
 	@Override
 	public int compareTo(final Site o) {
 		return o == null ? -1 : name.compareTo(o.name);
+	}
+
+	public String nameNormalized() {
+		int idx = name.lastIndexOf('.');
+		final String s = name.substring(0, idx);
+		idx = s.lastIndexOf('.');
+		return idx < 0 ? s : s.substring(idx);
 	}
 
 	// ---
@@ -184,7 +193,7 @@ public class Site implements Comparable<Site> {
 			cleanUp(child);
 		}
 
-		final Aggror aggror = App.app();
+		final Aggror app = App.app();
 		boolean isRemove = false;
 		boolean isRemovePotentially = false;
 		final String log = String.format("%-6s %-10s %d ", node.nodeName(), node.getClass().getSimpleName(), Integer.valueOf(node.childNodeSize()));
@@ -197,7 +206,7 @@ public class Site implements Comparable<Site> {
 			final int childrenSize = el.childrenSize();
 			boolean isElUnwrap = false;
 			isRemovePotentially = true;
-			final Integer elPrioObj = aggror.tagPriorities.get(name);
+			final Integer elPrioObj = app.tagPriorities.get(name);
 			final int elPrio = elPrioObj == null ? Integer.MAX_VALUE : elPrioObj.intValue();
 			if (elPrio == 0)
 				isRemovePotentially = false;
@@ -214,7 +223,7 @@ public class Site implements Comparable<Site> {
 				if (name.equals(fcName)) {
 					isElUnwrap = true;
 				} else {
-					final Integer fcPrioObj = aggror.tagPriorities.get(fcName);
+					final Integer fcPrioObj = app.tagPriorities.get(fcName);
 					final int fcPrio = fcPrioObj == null ? Integer.MAX_VALUE : fcPrioObj.intValue();
 					if (fcPrio < elPrio) {
 						System.out.println("--> el " + name + " " + elPrio + " > " + fcName + " " + fcPrio);

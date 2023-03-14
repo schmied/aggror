@@ -27,7 +27,7 @@ public class Bot extends Job {
 	@Override
 	public void doRun() throws JobInterruptException {
 		LOGGER.info("Start bot run.");
-		for (final Site site : Aggror.app().sites)
+		for (final Site site : Aggror.app().sites())
 			doRun(site);
 	}
 }
