@@ -22,6 +22,6 @@ public abstract class LongBase {
 
 	@Override
 	public String toString() {
-		return Long.toString(value);
+		return Long.toHexString(value);
 	}
 }

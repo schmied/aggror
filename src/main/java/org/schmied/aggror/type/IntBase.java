@@ -4,8 +4,10 @@ public abstract class IntBase {
 
 	public final int value;
 
-	protected IntBase(final int value) {
+	protected IntBase(final int value, final int bitLength) {
 		this.value = value;
+		if (this.value >> bitLength > 0)
+			throw new RuntimeException("Value out of bounds: " + value);
 	}
 
 	@Override
@@ -20,12 +22,7 @@ public abstract class IntBase {
 		return value == ((IntBase) o).value;
 	}
 
-	@Override
-	public String toString() {
-		return Integer.toString(value);
-	}
-
-	public String toHexString() {
-		return Integer.toHexString(value);
+	protected static String toString(final int value, final long bitMask) {
+		return Long.toHexString(value & bitMask);
 	}
 }

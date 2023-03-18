@@ -3,7 +3,7 @@ package org.schmied.aggror;
 import java.net.URL;
 import java.util.*;
 
-import org.schmied.aggror.type.SiteId;
+import org.schmied.aggror.type.*;
 import org.schmied.app.App;
 
 import com.github.benmanes.caffeine.cache.*;
@@ -29,10 +29,10 @@ public class Aggror extends App {
 //	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
 
 	private final SortedSet<Site> sites;
-	private final Map<SiteId, Site> sitesById;
+	private final Map<SitePk, Site> sitesByPk;
 	private final SortedMap<String, Site> sitesByName;
 
-	private final Cache<Long, Article> articles;
+	private final Cache<ArticlePk, Article> articles;
 
 	public final SortedMap<String, Integer> tagPriorities;
 
@@ -53,11 +53,11 @@ public class Aggror extends App {
 		log.info("{}", tagPriorities);
 
 		sites = Site.sites(prop.getMapOfString("site"));
-		sitesById = new HashMap<>();
+		sitesByPk = new HashMap<>();
 		sitesByName = new TreeMap<>();
 		for (final Site site : sites) {
 			log.info("{}", site.toString());
-			sitesById.put(site.id, site);
+			sitesByPk.put(site.pk, site);
 			sitesByName.put(site.name, site);
 		}
 
@@ -87,8 +87,8 @@ public class Aggror extends App {
 		return App.app();
 	}
 
-	public Site site(final SiteId siteId) {
-		return sitesById.get(siteId);
+	public Site site(final SitePk sitePk) {
+		return sitesByPk.get(sitePk);
 	}
 
 	public Site site(final String siteName) {

@@ -10,42 +10,36 @@ public class Article {
 
 	//private static final Logger LOGGER = LoggerFactory.getLogger(Article.class);
 
+	public final ArticlePk pk;
 	public final Time time;
-	public final SiteId siteId;
+	public final Site site;
 	public final UrlPathHash urlPathHash;
-	public final Long key;
 	public final String heading;
 
 	private Path path;
 
-	private Article(final Time time, final SiteId siteId, final UrlPathHash urlPathHash, final String heading) {
+	private Article(final Time time, final Site site, final UrlPathHash urlPathHash, final String heading) {
 		this.time = time;
-		this.siteId = siteId;
+		this.site = site;
 		this.urlPathHash = urlPathHash;
+		this.pk = ArticlePk.valueOf(time, site, urlPathHash);
 		this.heading = heading;
-		this.key = key(this.time, this.siteId, this.urlPathHash);
-		System.out.println(">>>>>>>> ARTICLE " + toString() + " " + Long.toHexString(key.longValue()));
+		System.out.println(">>>>>>>> ARTICLE " + toString());
 	}
 
 	public Article(final Site site, final URL url, final String heading) {
-		this(Time.now(), site.id, UrlPathHash.valueOf(url), heading);
+		this(Time.now(), site, UrlPathHash.valueOf(url), heading);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(1024);
-		sb.append(time.toHexString());
+		sb.append(pk.toString());
 		sb.append(' ');
-		sb.append(siteId.toString());
-		sb.append(' ');
-		sb.append(urlPathHash.toHexString());
+		sb.append(site.toString());
 		sb.append(' ');
 		sb.append(heading);
 		return sb.toString();
-	}
-
-	public static Long key(final Time time, final SiteId siteId, final UrlPathHash urlPathHash) {
-		return Long.valueOf((time.value << 16) | siteId.value);
 	}
 
 	// ---
@@ -54,7 +48,7 @@ public class Article {
 		if (path == null) {
 			final Aggror app = App.app();
 			final StringBuilder fileName = new StringBuilder(32);
-			fileName.append(app.site(siteId).toString());
+			fileName.append(site.toString());
 			fileName.append('_');
 			fileName.append(urlPathHash.toString());
 			fileName.append('.');

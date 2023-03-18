@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
-import org.schmied.aggror.type.SiteId;
+import org.schmied.aggror.type.SitePk;
 import org.schmied.app.*;
 import org.slf4j.*;
 
@@ -23,14 +23,14 @@ public class Site implements Comparable<Site> {
 
 	// ---
 
-	public final SiteId id;
+	public final SitePk pk;
 	public final String name, language;
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
 
 	private Site(final String name, final SortedMap<String, Object> subProps) throws Exception {
 		this.name = name;
-		this.id = id(this.name);
+		this.pk = pk(this.name);
 		this.language = subProps.get(SUBPROP_LANG).toString().trim();
 		this.startPages = new TreeSet<>();
 		this.startPages.add("https://" + this.name + "/");
@@ -64,21 +64,21 @@ public class Site implements Comparable<Site> {
 			}
 		}
 
-		LOGGER.info("site:{} id:{} language:{} startPages:{} regexMath:{} regexNomatch:{}", name, id, language, startPages.toString(), regexMatchs.keySet().toString(),
+		LOGGER.info("site:{} id:{} language:{} startPages:{} regexMath:{} regexNomatch:{}", name, pk, language, startPages.toString(), regexMatchs.keySet().toString(),
 				regexNoMatchs.keySet().toArray());
 	}
 
-	private static SiteId id(final String name) throws Exception {
+	private static SitePk pk(final String name) throws Exception {
 		final Db db = App.app().db;
 		final String query = "SELECT site_id FROM site WHERE name = '" + name + "'";
-		SiteId id = SiteId.valueOf(db.queryObject(query, Integer.class));
-		if (id == null) {
+		SitePk pk = SitePk.valueOf(db.queryObject(query, Integer.class));
+		if (pk == null) {
 			db.update("INSERT INTO site (name) VALUES ('" + name + "')");
-			id = SiteId.valueOf(db.queryObject(query, Integer.class));
+			pk = SitePk.valueOf(db.queryObject(query, Integer.class));
 		}
-		if (id == null)
+		if (pk == null)
 			throw new Exception("Cannot insert site.");
-		return id;
+		return pk;
 	}
 
 	public static SortedSet<Site> sites(final SortedMap<String, String> props) throws Exception {
@@ -451,7 +451,7 @@ public class Site implements Comparable<Site> {
 			LOGGER.warn(url.toString() + ": " + e.getMessage());
 		}
 	}
-
+	
 	public List<URL> download() throws Exception {
 		final SortedSet<String> articleUrls = new TreeSet<>();
 		final SortedSet<String> visited = new TreeSet<>();

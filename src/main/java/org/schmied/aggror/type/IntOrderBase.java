@@ -2,8 +2,8 @@ package org.schmied.aggror.type;
 
 public abstract class IntOrderBase extends IntBase implements Comparable<IntOrderBase> {
 
-	protected IntOrderBase(final int value) {
-		super(value);
+	protected IntOrderBase(final int value, final int bits) {
+		super(value, bits);
 	}
 
 	@Override
