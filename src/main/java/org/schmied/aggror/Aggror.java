@@ -3,7 +3,10 @@ package org.schmied.aggror;
 import java.net.URL;
 import java.util.*;
 
+import org.schmied.aggror.type.Id;
 import org.schmied.app.App;
+
+import com.github.benmanes.caffeine.cache.*;
 
 public class Aggror extends App {
 
@@ -12,9 +15,9 @@ public class Aggror extends App {
 			final Aggror app = new Aggror();
 			final Site s = app.sites().first();
 			final Article a = new Article(s, new URL(
-					"https://www.spiegel.de/kultur/david-grossman-und-999-weitere-israelische-kuenstler-fordern-absage-von-netanyahus-berlin-besuch-a-4821c5ef-f883-478d-883e-7d00f542d4ab?abdf=345345"),
-					"Alle mal aufgepasst");
-			System.out.println(">>>>>>>>>> " + a.path());
+					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"),
+					"How a warrant for Putin puts new spin on Xi visit to Russia");
+			System.out.println(">>>>>>>>>> " + a.path("png"));
 		} catch (final Exception e) {
 			exit(1, e);
 		}
@@ -25,13 +28,12 @@ public class Aggror extends App {
 //	public static final float GOLDEN_RATIO_0 = 0.618033988749f;
 //	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
 //
-	public static final int INTERVAL_IN_HOURS = 6;
-	public static final int INTERVAL_IN_SECONDS = 60 * 60 * INTERVAL_IN_HOURS;
-	public static final long INTERVAL_IN_MILLIS = 1000 * INTERVAL_IN_SECONDS;
 
 	private final SortedSet<Site> sites;
-	private final SortedMap<Short, Site> sitesById;
+	private final Map<Id, Site> sitesById;
 	private final SortedMap<String, Site> sitesByName;
+
+	private final Cache<Short, Article> articles;
 
 	public final SortedMap<String, Integer> tagPriorities;
 
@@ -52,7 +54,7 @@ public class Aggror extends App {
 		log.info("{}", tagPriorities);
 
 		sites = Site.sites(prop.getMapOfString("site"));
-		sitesById = new TreeMap<>();
+		sitesById = new HashMap<>();
 		sitesByName = new TreeMap<>();
 		for (final Site site : sites) {
 			log.info("{}", site.toString());
@@ -75,6 +77,8 @@ public class Aggror extends App {
 		}
 		*/
 
+		articles = Caffeine.newBuilder().maximumSize(1000).build();
+
 		startScheduler();
 
 		ServerHandler.startServer();
@@ -84,7 +88,7 @@ public class Aggror extends App {
 		return App.app();
 	}
 
-	public Site site(final Short siteId) {
+	public Site site(final Id siteId) {
 		return sitesById.get(siteId);
 	}
 
@@ -100,7 +104,7 @@ public class Aggror extends App {
 	public String siteName(final Short siteId) {
 		return siteNames.get(siteId);
 	}
-	
+
 	public Short siteId(final String siteName) {
 		return siteIds.get(siteName);
 	}
@@ -114,8 +118,9 @@ public class Aggror extends App {
 		db.update("CREATE INDEX IF NOT EXISTS site_name_idx ON site USING btree (name)");
 
 		// article
-		db.update("CREATE TABLE IF NOT EXISTS article (time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, heading TEXT," //
-				+ " CONSTRAINT article_site_fk FOREIGN KEY(site_id) REFERENCES site(site_id))");
+		db.update(
+				"CREATE TABLE IF NOT EXISTS article (article_id SERIAL PRIMARY KEY, time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, heading TEXT," //
+						+ " CONSTRAINT article_site_fk FOREIGN KEY(site_id) REFERENCES site(site_id))");
 		db.update("CREATE INDEX IF NOT EXISTS article_time_idx ON article USING btree (time)");
 		db.update("CREATE INDEX IF NOT EXISTS article_site_id_idx ON article USING btree (site_id)");
 		db.update("CREATE INDEX IF NOT EXISTS article_url_hash_idx ON article USING btree (url_hash)");

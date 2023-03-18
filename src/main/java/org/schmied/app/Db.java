@@ -59,6 +59,16 @@ public class Db {
 		}
 	}
 
+	public int queryInt(final String sql, final int defaultValue) throws Exception {
+		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+			if (rs.next())
+				return rs.getInt(1);
+			return defaultValue;
+		} catch (final Exception e) {
+			throw e;
+		}
+	}
+
 	public <T> T queryObject(final String sql, final Class<T> c) throws Exception {
 		try (final Statement st = connection.createStatement(); ResultSet rs = st.executeQuery(sql)) {
 			if (rs.next())

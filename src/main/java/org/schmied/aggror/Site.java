@@ -1,14 +1,13 @@
 package org.schmied.aggror;
 
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
+import org.schmied.aggror.type.Id;
 import org.schmied.app.*;
 import org.slf4j.*;
 
@@ -24,7 +23,7 @@ public class Site implements Comparable<Site> {
 
 	// ---
 
-	public final Short id;
+	public final Id id;
 	public final String name, language;
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
@@ -69,15 +68,16 @@ public class Site implements Comparable<Site> {
 				regexNoMatchs.keySet().toArray());
 	}
 
-	private static Short id(final String name) throws Exception {
+	private static Id id(final String name) throws Exception {
 		final Db db = App.app().db;
 		final String query = "SELECT site_id FROM site WHERE name = '" + name + "'";
-		Short id = db.queryObject(query, Short.class);
-		if (id == null)
+		Id id = Id.valueOf(db.queryObject(query, Integer.class));
+		if (id == null) {
 			db.update("INSERT INTO site (name) VALUES ('" + name + "')");
-		id = db.queryObject(query, Short.class);
+			id = Id.valueOf(db.queryObject(query, Integer.class));
+		}
 		if (id == null)
-			throw new Exception();
+			throw new Exception("Cannot insert site.");
 		return id;
 	}
 
@@ -104,7 +104,7 @@ public class Site implements Comparable<Site> {
 
 	@Override
 	public int hashCode() {
-		return id.intValue();
+		return name.hashCode();
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class Site implements Comparable<Site> {
 		return o == null ? -1 : name.compareTo(o.name);
 	}
 
-	public String nameNormalized() {
+	public String filenamePart() {
 		int idx = name.lastIndexOf('.');
 		final String s = name.substring(0, idx);
 		idx = s.lastIndexOf('.');
@@ -131,6 +131,7 @@ public class Site implements Comparable<Site> {
 
 	// ---
 
+/*
 	private String fileName(final URL url, final String suffix) {
 		String s = url.toString().toLowerCase().replaceAll("^.*://.*" + name + "/", "").replace('/', '_').replaceAll("[^a-z_-]", "-").replaceAll("-[^-]-", "-")
 				.replaceAll("-[^-]-", "-").replaceAll("-[^-]-", "-").replaceAll("[-]+", "-").replaceAll("_.?[-_]+", "").replaceAll(suffix + "$", "")
@@ -150,6 +151,7 @@ public class Site implements Comparable<Site> {
 	private Path path(final URL url, final String dir, final String suffix) {
 		return path().resolve(dir).resolve(fileName(url, suffix));
 	}
+*/
 
 	// ---
 
@@ -405,6 +407,7 @@ public class Site implements Comparable<Site> {
 		}
 	}
 
+	/*
 	private void download(final URL url, Document doc, final boolean forceRedownload) {
 		final Path pathHtml = path(url, "html_orig", "html");
 		if (!Files.exists(pathHtml) || forceRedownload) {
@@ -470,4 +473,5 @@ public class Site implements Comparable<Site> {
 		LOGGER.info("DOWNLOAD CONTENT END");
 		return links;
 	}
+	*/
 }
