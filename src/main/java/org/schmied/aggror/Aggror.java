@@ -3,7 +3,7 @@ package org.schmied.aggror;
 import java.net.URL;
 import java.util.*;
 
-import org.schmied.aggror.type.Id;
+import org.schmied.aggror.type.SiteId;
 import org.schmied.app.App;
 
 import com.github.benmanes.caffeine.cache.*;
@@ -27,13 +27,12 @@ public class Aggror extends App {
 
 //	public static final float GOLDEN_RATIO_0 = 0.618033988749f;
 //	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
-//
 
 	private final SortedSet<Site> sites;
-	private final Map<Id, Site> sitesById;
+	private final Map<SiteId, Site> sitesById;
 	private final SortedMap<String, Site> sitesByName;
 
-	private final Cache<Short, Article> articles;
+	private final Cache<Long, Article> articles;
 
 	public final SortedMap<String, Integer> tagPriorities;
 
@@ -77,7 +76,7 @@ public class Aggror extends App {
 		}
 		*/
 
-		articles = Caffeine.newBuilder().maximumSize(1000).build();
+		articles = Caffeine.newBuilder().maximumSize(10000).build();
 
 		startScheduler();
 
@@ -88,7 +87,7 @@ public class Aggror extends App {
 		return App.app();
 	}
 
-	public Site site(final Id siteId) {
+	public Site site(final SiteId siteId) {
 		return sitesById.get(siteId);
 	}
 
@@ -100,15 +99,9 @@ public class Aggror extends App {
 		return sites;
 	}
 
-	/*
-	public String siteName(final Short siteId) {
-		return siteNames.get(siteId);
+	public Article article(final URL url) {
+		return null;
 	}
-
-	public Short siteId(final String siteName) {
-		return siteIds.get(siteName);
-	}
-	*/
 
 	@Override
 	public void initDb() throws Exception {
@@ -119,7 +112,7 @@ public class Aggror extends App {
 
 		// article
 		db.update(
-				"CREATE TABLE IF NOT EXISTS article (article_id SERIAL PRIMARY KEY, time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, heading TEXT," //
+				"CREATE TABLE IF NOT EXISTS article (article_id SERIAL PRIMARY KEY, time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, rating SMALLINT NOT NULL, heading TEXT," //
 						+ " CONSTRAINT article_site_fk FOREIGN KEY(site_id) REFERENCES site(site_id))");
 		db.update("CREATE INDEX IF NOT EXISTS article_time_idx ON article USING btree (time)");
 		db.update("CREATE INDEX IF NOT EXISTS article_site_id_idx ON article USING btree (site_id)");

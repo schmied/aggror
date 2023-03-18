@@ -1,16 +1,16 @@
 package org.schmied.aggror.type;
 
-public abstract class IntBase {
+public abstract class LongBase {
 
-	public final int value;
+	public final long value;
 
-	protected IntBase(final int value) {
+	public LongBase(final long value) {
 		this.value = value;
 	}
 
 	@Override
 	public int hashCode() {
-		return value;
+		return Long.hashCode(value);
 	}
 
 	@Override
@@ -22,10 +22,6 @@ public abstract class IntBase {
 
 	@Override
 	public String toString() {
-		return Integer.toString(value);
-	}
-
-	public String toHexString() {
-		return Integer.toHexString(value);
+		return Long.toString(value);
 	}
 }

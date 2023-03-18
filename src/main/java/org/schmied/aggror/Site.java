@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
-import org.schmied.aggror.type.Id;
+import org.schmied.aggror.type.SiteId;
 import org.schmied.app.*;
 import org.slf4j.*;
 
@@ -23,7 +23,7 @@ public class Site implements Comparable<Site> {
 
 	// ---
 
-	public final Id id;
+	public final SiteId id;
 	public final String name, language;
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
@@ -68,13 +68,13 @@ public class Site implements Comparable<Site> {
 				regexNoMatchs.keySet().toArray());
 	}
 
-	private static Id id(final String name) throws Exception {
+	private static SiteId id(final String name) throws Exception {
 		final Db db = App.app().db;
 		final String query = "SELECT site_id FROM site WHERE name = '" + name + "'";
-		Id id = Id.valueOf(db.queryObject(query, Integer.class));
+		SiteId id = SiteId.valueOf(db.queryObject(query, Integer.class));
 		if (id == null) {
 			db.update("INSERT INTO site (name) VALUES ('" + name + "')");
-			id = Id.valueOf(db.queryObject(query, Integer.class));
+			id = SiteId.valueOf(db.queryObject(query, Integer.class));
 		}
 		if (id == null)
 			throw new Exception("Cannot insert site.");
@@ -122,12 +122,14 @@ public class Site implements Comparable<Site> {
 		return o == null ? -1 : name.compareTo(o.name);
 	}
 
+	/*
 	public String filenamePart() {
 		int idx = name.lastIndexOf('.');
 		final String s = name.substring(0, idx);
 		idx = s.lastIndexOf('.');
 		return idx < 0 ? s : s.substring(idx);
 	}
+	*/
 
 	// ---
 

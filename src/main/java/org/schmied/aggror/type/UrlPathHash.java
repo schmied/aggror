@@ -2,30 +2,27 @@ package org.schmied.aggror.type;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
-import org.schmied.aggror.Site;
+public class UrlPathHash extends IntBase {
 
-public class Hash extends IntBase {
+	private static final Pattern PATTERN_HEAD = Pattern.compile("^.*://[^/]*/");
+	private static final Pattern PATTERN_TAIL = Pattern.compile("\\?.*");
 
-	private Hash(final int value) {
+	private UrlPathHash(final int value) {
 		super(value);
 	}
 
-	public static final Hash valueOf(final Site site, final URL url) {
-		final String urlNormalized = url.toString().toLowerCase().replaceAll("^.*://.*" + site.name + "/", "").replaceAll("\\?.*", "");
+	public static final UrlPathHash valueOf(final URL url) {
+		final String urlNormalized = PATTERN_TAIL.matcher(PATTERN_HEAD.matcher(url.toString().toLowerCase()).replaceAll("")).replaceAll("");
 		System.out.println(">>>>>> " + url + " -> " + urlNormalized);
-		return new Hash(fletcher16OptOrig(urlNormalized.getBytes(StandardCharsets.UTF_8)));
+		return new UrlPathHash(fletcher16OptOrig(urlNormalized.getBytes(StandardCharsets.UTF_8)));
 	}
 
-	public String filenamePart() {
+	@Override
+	public String toString() {
 		return Integer.toHexString(value & 0x0000ffff);
 	}
-
-//	public static Hash urlHash(final Site site, final URL url) {
-//		final String urlNormalized = url.toString().toLowerCase().replaceAll("^.*://.*" + site.name + "/", "").replaceAll("\\?.*", "");
-//		System.out.println(">>>>>> " + url + " -> " + urlNormalized);
-//		return valueOf(fletcher16OptOrig(urlNormalized.getBytes(StandardCharsets.UTF_8)));
-//	}
 
 	// ---
 
