@@ -26,7 +26,7 @@ public class Time extends IntOrderBase {
 	}
 
 	public static final Time valueOf(final ArticlePk articlePk) {
-		return valueOf((int) ((articlePk.value >> (SitePk.BIT_LENGTH + UrlPathHash.BIT_LENGTH)) & Time.BIT_MASK));
+		return articlePk == null ? null : valueOf((int) ((articlePk.value >> (SitePk.BIT_LENGTH + UrlPathHash.BIT_LENGTH)) & Time.BIT_MASK));
 	}
 
 	// ---

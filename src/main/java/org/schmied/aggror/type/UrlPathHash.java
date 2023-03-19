@@ -27,7 +27,7 @@ public class UrlPathHash extends IntBase {
 	}
 
 	public static final UrlPathHash valueOf(final ArticlePk articlePk) {
-		return valueOf((int) (articlePk.value & BIT_MASK));
+		return articlePk == null ? null : valueOf((int) (articlePk.value & BIT_MASK));
 	}
 
 	public static UrlPathHash valueOf(final URL url) {

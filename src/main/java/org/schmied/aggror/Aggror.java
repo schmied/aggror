@@ -90,6 +90,10 @@ public class Aggror extends App {
 
 	// ---
 
+	public SortedSet<Site> sites() {
+		return sites;
+	}
+
 	public Site site(final SitePk sitePk) {
 		return sitesByPk.get(sitePk);
 	}
@@ -98,16 +102,8 @@ public class Aggror extends App {
 		return sitesByName.get(siteName);
 	}
 
-	public SortedSet<Site> sites() {
-		return sites;
-	}
-
 	public SitePk sitePk(final int pk) {
 		return sitePks[pk];
-	}
-
-	public Site site(final int pk) {
-		return sitesByPk.get(sitePks[pk]);
 	}
 
 	public Article article(final URL url) {

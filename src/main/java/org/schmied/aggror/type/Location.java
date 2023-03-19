@@ -43,7 +43,7 @@ public class Location {
 	// ---
 
 	private static final Location valueOf(final Site site, final UrlPathHash urlPathHash) {
-		return new Location(site, urlPathHash);
+		return site == null || urlPathHash == null ? null : new Location(site, urlPathHash);
 	}
 
 	public static final Location valueOf(final ArticlePk articlePk) {
@@ -59,11 +59,6 @@ public class Location {
 			if (idx > 0)
 				site = app.site(host.substring(idx + 1));
 		}
-		if (site == null) {
-			LOGGER.info("No site found for host '" + host + "'.");
-			return null;
-		}
-		final UrlPathHash urlPathHash = UrlPathHash.valueOf(url);
-		return valueOf(site, urlPathHash);
+		return valueOf(site, UrlPathHash.valueOf(url));
 	}
 }

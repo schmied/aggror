@@ -26,11 +26,7 @@ public class SitePk extends IntBase {
 	}
 
 	public static final SitePk valueOf(final ArticlePk articlePk) {
-		return valueOf((int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & UrlPathHash.BIT_MASK));
-	}
-
-	public static final SitePk valueOf(final Integer value) {
-		return value == null ? null : valueOf(value.intValue());
+		return articlePk == null ? null : valueOf((int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & UrlPathHash.BIT_MASK));
 	}
 
 	// ---

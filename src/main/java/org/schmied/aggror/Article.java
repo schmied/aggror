@@ -4,7 +4,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import org.schmied.aggror.type.*;
-import org.schmied.app.*;
+import org.schmied.app.App;
 import org.slf4j.*;
 
 public class Article {
@@ -21,7 +21,7 @@ public class Article {
 
 	private Article(final ArticlePk pk) {
 		this.pk = pk;
-		this.time = this.pk.time();
+		this.time = Time.valueOf(this.pk);
 		this.location = Location.valueOf(this.pk);
 	}
 
@@ -51,22 +51,23 @@ public class Article {
 
 	// ---
 
-	public static Article valueOfPk(final String pk) {
-		final ArticlePk apk = ArticlePk.valueOf(pk);
-		return pk == null ? null : new Article(apk);
-
-	}
-
 	public static final Article valueOf(final URL url) {
 		final Location location = Location.valueOf(url);
 		return location == null ? null : new Article(Time.now(), location);
 	}
 
-	public static Article valueOfUrl(final String url) {
+	public static final Article valueOfPk(final String pk) {
+		final ArticlePk apk = ArticlePk.valueOf(pk);
+		if (apk == null || apk.site() == null)
+			return null;
+		return new Article(apk);
+	}
+
+	public static final Article valueOfUrl(final String url) {
 		try {
-			return valueOf(new URL(url));
+			return url == null ? null : valueOf(new URL(url));
 		} catch (final Exception e) {
-			Log.warn(LOGGER, e);
+			LOGGER.info("Cannot parse URL '{}'.", url);
 			return null;
 		}
 	}
