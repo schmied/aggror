@@ -6,9 +6,11 @@ public abstract class IntBase {
 
 	protected IntBase(final int value, final int bitLength) {
 		this.value = value;
-		if (this.value >> bitLength > 0)
-			throw new RuntimeException("Value out of bounds: " + value);
+		if (bitLength < 32 && this.value >> bitLength > 0)
+			throw new RuntimeException("Value out of bounds for bit length " + bitLength + ": " + value + " / 0x" + Integer.toHexString(value));
 	}
+
+	// ---
 
 	@Override
 	public int hashCode() {
@@ -22,7 +24,9 @@ public abstract class IntBase {
 		return value == ((IntBase) o).value;
 	}
 
-	protected static String toString(final int value, final long bitMask) {
+	// ---
+
+	protected static final String toString(final int value, final long bitMask) {
 		return Long.toHexString(value & bitMask);
 	}
 }

@@ -12,10 +12,6 @@ public class Aggror extends App {
 
 	public static void main(final String[] args) {
 		try {
-			final Aggror app = new Aggror();
-//			final Article a = Article.valueOf(new URL(
-//					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"),
-//					"How a warrant for Putin puts new spin on Xi visit to Russia");
 			final Article a = Article.valueOf(new URL(
 					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"));
 			System.out.println(">>>>>>>>>> " + a.path("png"));
@@ -32,6 +28,7 @@ public class Aggror extends App {
 	private final SortedSet<Site> sites;
 	private final Map<SitePk, Site> sitesByPk;
 	private final SortedMap<String, Site> sitesByName;
+	private final SitePk[] sitePks;
 
 	private final Cache<ArticlePk, Article> articles;
 
@@ -56,10 +53,12 @@ public class Aggror extends App {
 		sites = Site.sites(prop.getMapOfString("site"));
 		sitesByPk = new HashMap<>();
 		sitesByName = new TreeMap<>();
+		sitePks = new SitePk[sites.size() + 10];
 		for (final Site site : sites) {
 			log.info("{}", site.toString());
 			sitesByPk.put(site.pk, site);
 			sitesByName.put(site.name, site);
+			sitePks[site.pk.value] = site.pk;
 		}
 
 		/*
@@ -88,6 +87,8 @@ public class Aggror extends App {
 		return App.app();
 	}
 
+	// ---
+
 	public Site site(final SitePk sitePk) {
 		return sitesByPk.get(sitePk);
 	}
@@ -100,9 +101,19 @@ public class Aggror extends App {
 		return sites;
 	}
 
+	public SitePk sitePk(final int pk) {
+		return sitePks[pk];
+	}
+
+	public Site site(final int pk) {
+		return sitesByPk.get(sitePks[pk]);
+	}
+
 	public Article article(final URL url) {
 		return Article.valueOf(url);
 	}
+
+	// ---
 
 	@Override
 	public void initDb() throws Exception {

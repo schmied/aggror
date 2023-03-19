@@ -6,6 +6,8 @@ public abstract class IntOrderBase extends IntBase implements Comparable<IntOrde
 		super(value, bits);
 	}
 
+	// ---
+
 	@Override
 	public int compareTo(final IntOrderBase o) {
 		if (o == null)

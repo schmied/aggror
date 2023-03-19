@@ -19,6 +19,12 @@ public class Article {
 
 	private Path path;
 
+	private Article(final ArticlePk pk) {
+		this.pk = pk;
+		this.time = this.pk.time();
+		this.location = Location.valueOf(this.pk);
+	}
+
 	private Article(final Time time, final Location location) {
 		this.time = time;
 		this.location = location;
@@ -26,18 +32,7 @@ public class Article {
 		System.out.println(">>>>>>>> ARTICLE " + toString());
 	}
 
-	public static Article valueOf(final URL url) {
-		return new Article(Time.now(), Location.valueOf(url));
-	}
-
-	public static Article valueOf(final String url) {
-		try {
-			return valueOf(new URL(url));
-		} catch (final Exception e) {
-			Log.warn(LOGGER, e);
-			return null;
-		}
-	}
+	// ---
 
 	@Override
 	public String toString() {
@@ -52,6 +47,28 @@ public class Article {
 			sb.append(heading);
 		}
 		return sb.toString();
+	}
+
+	// ---
+
+	public static Article valueOfPk(final String pk) {
+		final ArticlePk apk = ArticlePk.valueOf(pk);
+		return pk == null ? null : new Article(apk);
+
+	}
+
+	public static final Article valueOf(final URL url) {
+		final Location location = Location.valueOf(url);
+		return location == null ? null : new Article(Time.now(), location);
+	}
+
+	public static Article valueOfUrl(final String url) {
+		try {
+			return valueOf(new URL(url));
+		} catch (final Exception e) {
+			Log.warn(LOGGER, e);
+			return null;
+		}
 	}
 
 	// ---

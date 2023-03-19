@@ -8,6 +8,8 @@ public abstract class LongBase {
 		this.value = value;
 	}
 
+	// ---
+
 	@Override
 	public int hashCode() {
 		return Long.hashCode(value);

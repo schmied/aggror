@@ -18,6 +18,7 @@ public class Bot extends Job {
 
 	public void doRun(final Site site) {
 		try {
+			System.out.println(">>>> SITE " + site.toString());
 			//site.download();
 		} catch (final Exception e) {
 			Log.warn(LOGGER, e);

@@ -12,14 +12,24 @@ public class Time extends IntOrderBase {
 		super(value, BIT_LENGTH);
 	}
 
+	// ---
+
 	@Override
 	public String toString() {
 		return toString(value, BIT_MASK);
 	}
 
-//	public static final Time valueOf(final Short s) {
-//		return new Time(s.intValue());
-//	}
+	// ---
+
+	private static final Time valueOf(final int value) {
+		return new Time(value);
+	}
+
+	public static final Time valueOf(final ArticlePk articlePk) {
+		return valueOf((int) ((articlePk.value >> (SitePk.BIT_LENGTH + UrlPathHash.BIT_LENGTH)) & Time.BIT_MASK));
+	}
+
+	// ---
 
 	public Path path(final Path base) {
 		final String dirName1 = Integer.toHexString((value & 0x000f0000) >> 16);

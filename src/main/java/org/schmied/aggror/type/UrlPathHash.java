@@ -13,12 +13,24 @@ public class UrlPathHash extends IntBase {
 		super(value, BIT_LENGTH);
 	}
 
+	// ---
+
 	@Override
 	public String toString() {
 		return toString(value, BIT_MASK);
 	}
 
-	public static final UrlPathHash valueOf(final URL url) {
+	// ---
+
+	private static final UrlPathHash valueOf(final int value) {
+		return new UrlPathHash(value);
+	}
+
+	public static final UrlPathHash valueOf(final ArticlePk articlePk) {
+		return valueOf((int) (articlePk.value & BIT_MASK));
+	}
+
+	public static UrlPathHash valueOf(final URL url) {
 		if (url == null)
 			return null;
 		String path = url.getPath();
@@ -26,7 +38,6 @@ public class UrlPathHash extends IntBase {
 			path = path.substring(1);
 		final Adler32 adler32 = new Adler32();
 		adler32.update(path.getBytes(StandardCharsets.UTF_8));
-		System.out.println(">>>> " + url.toString() + " " + path);
-		return new UrlPathHash((int) adler32.getValue());
+		return valueOf((int) adler32.getValue());
 	}
 }

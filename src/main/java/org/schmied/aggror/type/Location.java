@@ -17,6 +17,8 @@ public class Location {
 		this.urlPathHash = urlPathHash;
 	}
 
+	// ---
+
 	@Override
 	public int hashCode() {
 		return site.hashCode() ^ urlPathHash.hashCode();
@@ -38,6 +40,16 @@ public class Location {
 		return sb.toString();
 	}
 
+	// ---
+
+	private static final Location valueOf(final Site site, final UrlPathHash urlPathHash) {
+		return new Location(site, urlPathHash);
+	}
+
+	public static final Location valueOf(final ArticlePk articlePk) {
+		return valueOf(Aggror.app().site(SitePk.valueOf(articlePk)), UrlPathHash.valueOf(articlePk));
+	}
+
 	public static Location valueOf(final URL url) {
 		final String host = url.getHost();
 		final Aggror app = Aggror.app();
@@ -51,8 +63,7 @@ public class Location {
 			LOGGER.info("No site found for host '" + host + "'.");
 			return null;
 		}
-		Integer.valueOf(0);
 		final UrlPathHash urlPathHash = UrlPathHash.valueOf(url);
-		return new Location(site, urlPathHash);
+		return valueOf(site, urlPathHash);
 	}
 }
