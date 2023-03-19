@@ -12,6 +12,7 @@ public class Aggror extends App {
 
 	public static void main(final String[] args) {
 		try {
+			final Aggror app = new Aggror();
 			final Article a = Article.valueOf(new URL(
 					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"));
 			System.out.println(">>>>>>>>>> " + a.path("png"));
