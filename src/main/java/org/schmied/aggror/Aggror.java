@@ -13,10 +13,11 @@ public class Aggror extends App {
 	public static void main(final String[] args) {
 		try {
 			final Aggror app = new Aggror();
-			final Site s = app.sites().first();
-			final Article a = new Article(s, new URL(
-					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"),
-					"How a warrant for Putin puts new spin on Xi visit to Russia");
+//			final Article a = Article.valueOf(new URL(
+//					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"),
+//					"How a warrant for Putin puts new spin on Xi visit to Russia");
+			final Article a = Article.valueOf(new URL(
+					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"));
 			System.out.println(">>>>>>>>>> " + a.path("png"));
 		} catch (final Exception e) {
 			exit(1, e);
@@ -100,7 +101,7 @@ public class Aggror extends App {
 	}
 
 	public Article article(final URL url) {
-		return null;
+		return Article.valueOf(url);
 	}
 
 	@Override
@@ -112,10 +113,9 @@ public class Aggror extends App {
 
 		// article
 		db.update(
-				"CREATE TABLE IF NOT EXISTS article (article_id SERIAL PRIMARY KEY, time SMALLINT NOT NULL, site_id SMALLINT NOT NULL, url_hash SMALLINT NOT NULL, rating SMALLINT NOT NULL, heading TEXT," //
+				"CREATE TABLE IF NOT EXISTS article (article_id BIGINT PRIMARY KEY, url_hash INT NOT NULL, site_id SMALLINT NOT NULL, rating SMALLINT NOT NULL, heading TEXT," //
 						+ " CONSTRAINT article_site_fk FOREIGN KEY(site_id) REFERENCES site(site_id))");
-		db.update("CREATE INDEX IF NOT EXISTS article_time_idx ON article USING btree (time)");
-		db.update("CREATE INDEX IF NOT EXISTS article_site_id_idx ON article USING btree (site_id)");
 		db.update("CREATE INDEX IF NOT EXISTS article_url_hash_idx ON article USING btree (url_hash)");
+		db.update("CREATE INDEX IF NOT EXISTS article_site_id_idx ON article USING btree (site_id)");
 	}
 }

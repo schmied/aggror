@@ -15,9 +15,9 @@ public abstract class LongBase {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (!(o instanceof IntBase))
+		if (!(o instanceof LongBase))
 			return false;
-		return value == ((IntBase) o).value;
+		return value == ((LongBase) o).value;
 	}
 
 	@Override
