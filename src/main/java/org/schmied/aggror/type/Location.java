@@ -47,17 +47,17 @@ public class Location {
 	}
 
 	public static final Location valueOf(final ArticlePk articlePk) {
-		return valueOf(Aggror.app().site(SitePk.valueOf(articlePk)), UrlPathHash.valueOf(articlePk));
+		return valueOf(Aggror.app().sites.site(SitePk.valueOf(articlePk)), UrlPathHash.valueOf(articlePk));
 	}
 
 	public static Location valueOf(final URL url) {
 		final String host = url.getHost();
 		final Aggror app = Aggror.app();
-		Site site = app.site(host);
+		Site site = app.sites.site(host);
 		if (site == null) {
 			final int idx = host.indexOf('.');
 			if (idx > 0)
-				site = app.site(host.substring(idx + 1));
+				site = app.sites.site(host.substring(idx + 1));
 		}
 		return valueOf(site, UrlPathHash.valueOf(url));
 	}

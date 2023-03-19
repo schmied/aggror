@@ -3,7 +3,7 @@ package org.schmied.aggror;
 import java.net.URL;
 import java.util.*;
 
-import org.schmied.aggror.type.*;
+import org.schmied.aggror.type.ArticlePk;
 import org.schmied.app.App;
 
 import com.github.benmanes.caffeine.cache.*;
@@ -26,12 +26,9 @@ public class Aggror extends App {
 //	public static final float GOLDEN_RATIO_0 = 0.618033988749f;
 //	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
 
-	private final SortedSet<Site> sites;
-	private final Map<SitePk, Site> sitesByPk;
-	private final SortedMap<String, Site> sitesByName;
-	private final SitePk[] sitePks;
-
 	private final Cache<ArticlePk, Article> articles;
+
+	public final Sites sites;
 
 	public final SortedMap<String, Integer> tagPriorities;
 
@@ -51,16 +48,7 @@ public class Aggror extends App {
 		}
 		log.info("{}", tagPriorities);
 
-		sites = Site.sites(prop.getMapOfString("site"));
-		sitesByPk = new HashMap<>();
-		sitesByName = new TreeMap<>();
-		sitePks = new SitePk[sites.size() + 10];
-		for (final Site site : sites) {
-			log.info("{}", site.toString());
-			sitesByPk.put(site.pk, site);
-			sitesByName.put(site.name, site);
-			sitePks[site.pk.value] = site.pk;
-		}
+		sites = new Sites(this);
 
 		/*
 		siteNames = new TreeMap<>();
@@ -90,21 +78,26 @@ public class Aggror extends App {
 
 	// ---
 
-	public SortedSet<Site> sites() {
-		return sites;
-	}
+//	public Sites sites() {
+//		return sites;
+//	}
 
-	public Site site(final SitePk sitePk) {
-		return sitesByPk.get(sitePk);
-	}
-
-	public Site site(final String siteName) {
-		return sitesByName.get(siteName);
-	}
-
-	public SitePk sitePk(final int pk) {
-		return sitePks[pk];
-	}
+//	public SortedSet<Site> sites() {
+//		return sites;
+//	}
+//
+//	public Site site(final SitePk sitePk) {
+//		return sitesByPk.get(sitePk);
+//	}
+//
+//	public Site site(final String siteName) {
+//		return sitesByName.get(siteName);
+//	}
+//
+//	public SitePk sitePk(final int sitePk) {
+//		IntBase.checkBits(sitePk, SitePk.BIT_LENGTH);
+//		return sitePks[sitePk];
+//	}
 
 	public Article article(final URL url) {
 		return Article.valueOf(url);

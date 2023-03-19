@@ -16,7 +16,7 @@ public class Time extends IntOrderBase {
 
 	@Override
 	public String toString() {
-		return toString(value, BIT_MASK);
+		return toString(value, 5, BIT_MASK);
 	}
 
 	// ---
@@ -26,7 +26,7 @@ public class Time extends IntOrderBase {
 	}
 
 	public static final Time valueOf(final ArticlePk articlePk) {
-		return articlePk == null ? null : valueOf((int) ((articlePk.value >> (SitePk.BIT_LENGTH + UrlPathHash.BIT_LENGTH)) & Time.BIT_MASK));
+		return articlePk == null ? null : valueOf((int) ((articlePk.value >> (SitePk.BIT_LENGTH + UrlPathHash.BIT_LENGTH)) & BIT_MASK));
 	}
 
 	// ---

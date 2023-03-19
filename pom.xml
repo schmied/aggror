@@ -26,7 +26,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.2.5</version>
+									<version>3.8.7</version>
 								</requireMavenVersion>
 							</rules>
 						</configuration>
@@ -61,7 +61,7 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>3.4.1</version>
 				<configuration>
-					<finalName>tajava</finalName>
+					<finalName>aggror</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -134,6 +134,12 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>11.0.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.9.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

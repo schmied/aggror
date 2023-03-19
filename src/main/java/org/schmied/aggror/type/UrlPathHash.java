@@ -17,7 +17,7 @@ public class UrlPathHash extends IntBase {
 
 	@Override
 	public String toString() {
-		return toString(value, BIT_MASK);
+		return toString(value, 8, BIT_MASK);
 	}
 
 	// ---

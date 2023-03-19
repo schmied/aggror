@@ -5,7 +5,7 @@ import org.schmied.app.*;
 
 public class SitePk extends IntBase {
 
-	protected static final int BIT_LENGTH = 12;
+	public static final int BIT_LENGTH = 12;
 	protected static final long BIT_MASK = 0xfffL;
 
 	private SitePk(final int value) {
@@ -16,17 +16,25 @@ public class SitePk extends IntBase {
 
 	@Override
 	public String toString() {
-		return Integer.toString(value);
+		return toString(value, 3, BIT_MASK);
 	}
+
+//	@Override
+//	public String toString() {
+//		return Integer.toString(value);
+//	}
 
 	// ---
 
 	private static final SitePk valueOf(final int value) {
-		return Aggror.app().sitePk(value);
+		final Aggror app = Aggror.app();
+		if (app != null)
+			return app.sites.sitePk(value);
+		return new SitePk(value);
 	}
 
 	public static final SitePk valueOf(final ArticlePk articlePk) {
-		return articlePk == null ? null : valueOf((int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & UrlPathHash.BIT_MASK));
+		return articlePk == null ? null : valueOf((int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & BIT_MASK));
 	}
 
 	// ---

@@ -2,6 +2,8 @@ package org.schmied.aggror.type;
 
 public abstract class LongBase {
 
+	private static final int HEX_LENGTH = 16;
+
 	public final long value;
 
 	public LongBase(final long value) {
@@ -24,6 +26,9 @@ public abstract class LongBase {
 
 	@Override
 	public String toString() {
-		return Long.toHexString(value);
+		final String s = Long.toHexString(value);
+		if (s.length() == HEX_LENGTH)
+			return s;
+		return IntBase.hexPad(s, HEX_LENGTH);
 	}
 }

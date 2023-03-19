@@ -6,8 +6,7 @@ public abstract class IntBase {
 
 	protected IntBase(final int value, final int bitLength) {
 		this.value = value;
-		if (bitLength < 32 && this.value >> bitLength > 0)
-			throw new RuntimeException("Value out of bounds for bit length " + bitLength + ": " + value + " / 0x" + Integer.toHexString(value));
+		checkBits(value, bitLength);
 	}
 
 	// ---
@@ -26,7 +25,24 @@ public abstract class IntBase {
 
 	// ---
 
-	protected static final String toString(final int value, final long bitMask) {
-		return Long.toHexString(value & bitMask);
+	protected static String hexPad(final String value, final int hexLength) {
+		final int leadingZeroCount = hexLength - value.length();
+		final StringBuilder sb = new StringBuilder(hexLength);
+		while (sb.length() < leadingZeroCount)
+			sb.append('0');
+		sb.append(value);
+		return sb.toString();
+	}
+
+	protected static String toString(final int value, final int hexLength, final long bitMask) {
+		final String s = Long.toHexString(value & bitMask);
+		if (s.length() == hexLength)
+			return s;
+		return hexPad(s, hexLength);
+	}
+
+	public static final void checkBits(final int value, final int bitLength) {
+		if (bitLength < 32 && value >> bitLength > 0)
+			throw new RuntimeException("Value out of bounds for bit length " + bitLength + ": " + value + " / 0x" + Integer.toHexString(value));
 	}
 }

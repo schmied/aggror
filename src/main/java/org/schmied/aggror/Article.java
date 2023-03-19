@@ -23,12 +23,17 @@ public class Article {
 		this.pk = pk;
 		this.time = Time.valueOf(this.pk);
 		this.location = Location.valueOf(this.pk);
+		if (this.time == null || this.location == null)
+			throw new RuntimeException("Time and location must not be null.");
+		System.out.println(">>>>>>>> ARTICLE " + toString());
 	}
 
 	private Article(final Time time, final Location location) {
 		this.time = time;
 		this.location = location;
 		this.pk = ArticlePk.valueOf(this.time, this.location);
+		if (this.pk == null)
+			throw new RuntimeException("PK must not be null.");
 		System.out.println(">>>>>>>> ARTICLE " + toString());
 	}
 
@@ -58,7 +63,7 @@ public class Article {
 
 	public static final Article valueOfPk(final String pk) {
 		final ArticlePk apk = ArticlePk.valueOf(pk);
-		if (apk == null || apk.site() == null)
+		if (apk == null || apk.sitePk() == null)
 			return null;
 		return new Article(apk);
 	}
@@ -78,7 +83,7 @@ public class Article {
 		if (path == null) {
 			final Aggror app = App.app();
 			final StringBuilder fileName = new StringBuilder(32);
-			fileName.append(location.site.toString());
+			fileName.append(location.site.name);
 			fileName.append('_');
 			fileName.append(location.urlPathHash.toString());
 			fileName.append('.');

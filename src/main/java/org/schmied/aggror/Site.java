@@ -28,15 +28,15 @@ public class Site implements Comparable<Site> {
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
 
-	private Site(final String name, final SortedMap<String, Object> subProps) throws Exception {
+	private Site(final String name, final SortedMap<String, String> subProps) throws Exception {
 		this.name = name;
 		this.pk = SitePk.create(this.name);
-		this.language = subProps.get(SUBPROP_LANG).toString().trim();
+		this.language = subProps.get(SUBPROP_LANG).trim();
 		this.startPages = new TreeSet<>();
 		this.startPages.add("https://" + this.name + "/");
 		this.regexMatchs = new TreeMap<>();
-		final Object remsVal = subProps.get(SUBPROP_REGEX_MATCH);
-		final String[] rems = remsVal == null ? new String[0] : remsVal.toString().split("\\s+");
+		final String remsVal = subProps.get(SUBPROP_REGEX_MATCH);
+		final String[] rems = remsVal == null ? new String[0] : remsVal.split("\\s+");
 		for (String rem : rems) {
 			rem = rem.trim();
 			if (rem.isEmpty())
@@ -51,7 +51,7 @@ public class Site implements Comparable<Site> {
 				startPages.add("https://" + name + "/" + rem.replace("^", "").replace("/.*", "/"));
 		}
 		this.regexNoMatchs = new TreeMap<>();
-		final Object renmsVal = subProps.get(SUBPROP_REGEX_NOMATCH);
+		final String renmsVal = subProps.get(SUBPROP_REGEX_NOMATCH);
 		final String[] renms = renmsVal == null ? new String[0] : renmsVal.toString().split("\\s+");
 		for (String renm : renms) {
 			renm = renm.trim();
@@ -69,11 +69,11 @@ public class Site implements Comparable<Site> {
 	}
 
 	public static SortedSet<Site> sites(final SortedMap<String, String> props) throws Exception {
-		final SortedMap<String, SortedMap<String, Object>> subPropsBySite = new TreeMap<>();
+		final SortedMap<String, SortedMap<String, String>> subPropsBySite = new TreeMap<>();
 		for (final String key : props.keySet()) {
 			final int idx = key.lastIndexOf('.');
 			final String site = key.substring(0, idx);
-			SortedMap<String, Object> subProps = subPropsBySite.get(site);
+			SortedMap<String, String> subProps = subPropsBySite.get(site);
 			if (subProps == null) {
 				subProps = new TreeMap<>();
 				subPropsBySite.put(site, subProps);
@@ -101,7 +101,11 @@ public class Site implements Comparable<Site> {
 
 	@Override
 	public String toString() {
-		return name;
+		final StringBuilder sb = new StringBuilder(64);
+		sb.append(pk.toString());
+		sb.append(':');
+		sb.append(name);
+		return sb.toString();
 	}
 
 	@Override
@@ -438,7 +442,7 @@ public class Site implements Comparable<Site> {
 			LOGGER.warn(url.toString() + ": " + e.getMessage());
 		}
 	}
-
+	
 	public List<URL> download() throws Exception {
 		final SortedSet<String> articleUrls = new TreeSet<>();
 		final SortedSet<String> visited = new TreeSet<>();

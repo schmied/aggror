@@ -18,7 +18,7 @@ public class Bot extends Job {
 
 	public void doRun(final Site site) {
 		try {
-			System.out.println(">>>> SITE " + site.toString());
+			System.out.println(">>>> DO RUN SITE " + site.toString());
 			//site.download();
 		} catch (final Exception e) {
 			Log.warn(LOGGER, e);
@@ -28,7 +28,7 @@ public class Bot extends Job {
 	@Override
 	public void doRun() throws JobInterruptException {
 		LOGGER.info("Start bot run.");
-		for (final Site site : Aggror.app().sites())
+		for (final Site site : Aggror.app().sites.sortedSet())
 			doRun(site);
 	}
 }
