@@ -2,7 +2,7 @@ package org.schmied.aggror.type;
 
 import java.math.BigInteger;
 
-import org.schmied.aggror.*;
+import org.schmied.aggror.Sites;
 import org.slf4j.*;
 
 public class ArticlePk extends LongBase {
@@ -19,11 +19,11 @@ public class ArticlePk extends LongBase {
 		return new ArticlePk(value);
 	}
 
-	public static ArticlePk valueOf(final String pk) {
+	public static ArticlePk valueOf(final String articlePk) {
 		try {
-			return pk == null ? null : valueOf(new BigInteger(pk, 16).longValue());
+			return articlePk == null ? null : valueOf(new BigInteger(articlePk, 16).longValue());
 		} catch (final Exception e) {
-			LOGGER.info("Cannot parse '{}' to long: {}", pk, e.getMessage());
+			LOGGER.info("Cannot parse '{}' to long: {}", articlePk, e.getMessage());
 			return null;
 		}
 	}
@@ -44,13 +44,13 @@ public class ArticlePk extends LongBase {
 		return Time.valueOf(this);
 	}
 
-	public final SitePk sitePk() {
-		return SitePk.valueOf(this);
+	public final SitePk sitePk(final Sites sites) {
+		return SitePk.valueOf(sites, this);
 	}
 
-	public final Site site() {
-		return Aggror.app().sites.site(sitePk());
-	}
+//	public final Site site() {
+//		return Aggror.app().sites.site(sitePk());
+//	}
 
 	public final UrlPathHash urlPathHash() {
 		return UrlPathHash.valueOf(this);

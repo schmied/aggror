@@ -29,6 +29,6 @@ public abstract class LongBase {
 		final String s = Long.toHexString(value);
 		if (s.length() == HEX_LENGTH)
 			return s;
-		return IntBase.hexPad(s, HEX_LENGTH);
+		return IntBase.pad(s, HEX_LENGTH);
 	}
 }

@@ -4,7 +4,6 @@ import java.net.URL;
 import java.nio.file.Path;
 
 import org.schmied.aggror.type.*;
-import org.schmied.app.App;
 import org.slf4j.*;
 
 public class Article {
@@ -17,12 +16,10 @@ public class Article {
 	public final Location location;
 	public final Time time;
 
-	private Path path;
-
-	private Article(final ArticlePk pk) {
+	private Article(final Sites sites, final ArticlePk pk) {
 		this.pk = pk;
 		this.time = Time.valueOf(this.pk);
-		this.location = Location.valueOf(this.pk);
+		this.location = Location.valueOf(sites, this.pk);
 		if (this.time == null || this.location == null)
 			throw new RuntimeException("Time and location must not be null.");
 		System.out.println(">>>>>>>> ARTICLE " + toString());
@@ -61,11 +58,11 @@ public class Article {
 		return location == null ? null : new Article(Time.now(), location);
 	}
 
-	public static final Article valueOfPk(final String pk) {
-		final ArticlePk apk = ArticlePk.valueOf(pk);
-		if (apk == null || apk.sitePk() == null)
+	public static final Article valueOfPk(final Sites sites, final String articlePk) {
+		final ArticlePk apk = ArticlePk.valueOf(articlePk);
+		if (apk == null || apk.sitePk(sites) == null)
 			return null;
-		return new Article(apk);
+		return new Article(sites, apk);
 	}
 
 	public static final Article valueOfUrl(final String url) {
@@ -79,9 +76,10 @@ public class Article {
 
 	// ---
 
-	public Path path(final String suffix) {
+	private Path path;
+
+	public Path path(final Aggror app, final String suffix) {
 		if (path == null) {
-			final Aggror app = App.app();
 			final StringBuilder fileName = new StringBuilder(32);
 			fileName.append(location.site.name);
 			fileName.append('_');

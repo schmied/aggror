@@ -1,7 +1,7 @@
 package org.schmied.aggror.type;
 
-import org.schmied.aggror.Aggror;
-import org.schmied.app.*;
+import org.schmied.aggror.*;
+import org.schmied.app.Db;
 
 public class SitePk extends IntBase {
 
@@ -26,21 +26,23 @@ public class SitePk extends IntBase {
 
 	// ---
 
-	private static final SitePk valueOf(final int value) {
-		final Aggror app = Aggror.app();
-		if (app != null)
-			return app.sites.sitePk(value);
+	private static final SitePk valueOf(final Sites sites, final int value) {
+//		final Aggror app = Aggror.app();
+//		if (app != null)
+//			return app.sites.sitePk(value);
+		if (sites != null)
+			return sites.sitePk(value);
 		return new SitePk(value);
 	}
 
-	public static final SitePk valueOf(final ArticlePk articlePk) {
-		return articlePk == null ? null : valueOf((int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & BIT_MASK));
+	public static final SitePk valueOf(final Sites sites, final ArticlePk articlePk) {
+		return articlePk == null ? null : valueOf(sites, (int) ((articlePk.value >> UrlPathHash.BIT_LENGTH) & BIT_MASK));
 	}
 
 	// ---
 
-	public static SitePk create(final String name) throws Exception {
-		final Db db = App.app().db;
+	public static SitePk create(final Aggror app, final String name) throws Exception {
+		final Db db = app.db;
 		final String query = "SELECT site_id FROM site WHERE name = '" + name + "'";
 		Integer pk = db.queryObject(query, Integer.class);
 		if (pk == null) {

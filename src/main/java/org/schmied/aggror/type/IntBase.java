@@ -25,9 +25,11 @@ public abstract class IntBase {
 
 	// ---
 
-	protected static String hexPad(final String value, final int hexLength) {
-		final int leadingZeroCount = hexLength - value.length();
-		final StringBuilder sb = new StringBuilder(hexLength);
+	protected static String pad(final String value, final int length) {
+		if (value.length() == length)
+			return value;
+		final int leadingZeroCount = length - value.length();
+		final StringBuilder sb = new StringBuilder(length);
 		while (sb.length() < leadingZeroCount)
 			sb.append('0');
 		sb.append(value);
@@ -38,7 +40,7 @@ public abstract class IntBase {
 		final String s = Long.toHexString(value & bitMask);
 		if (s.length() == hexLength)
 			return s;
-		return hexPad(s, hexLength);
+		return pad(s, hexLength);
 	}
 
 	public static final void checkBits(final int value, final int bitLength) {

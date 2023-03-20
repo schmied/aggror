@@ -20,6 +20,12 @@ public class ServerHandler extends AbstractHandler {
 	private static final String PARAM_KEY_ARTICLE_PK = "i";
 	private static final String PARAM_KEY_ARTICLE_URL = "u";
 
+	public final Aggror app;
+
+	public ServerHandler(final Aggror app) {
+		this.app = app;
+	}
+
 	private static String paramValue(final Map<String, String[]> params, final String key) {
 		final String[] values = params.get(key);
 		if (values == null)
@@ -31,12 +37,12 @@ public class ServerHandler extends AbstractHandler {
 		return values[0];
 	}
 
-	private static void handleArticle(final Map<String, String[]> params, final HttpServletResponse response) throws Exception {
+	private void handleArticle(final Map<String, String[]> params, final HttpServletResponse response) throws Exception {
 		Article article = null;
 
 		String value = paramValue(params, PARAM_KEY_ARTICLE_PK);
 		if (value != null)
-			article = Article.valueOfPk(value);
+			article = Article.valueOfPk(app.sites, value);
 		value = paramValue(params, PARAM_KEY_ARTICLE_URL);
 		if (value != null)
 			article = Article.valueOfUrl(value);
@@ -69,7 +75,7 @@ public class ServerHandler extends AbstractHandler {
 		}
 	}
 
-	public static void startServer() throws Exception {
+	public static void startServer(final Aggror app) throws Exception {
 		final HttpConfiguration config = new HttpConfiguration();
 		config.setSendDateHeader(false);
 		config.setSendServerVersion(false);
@@ -78,7 +84,7 @@ public class ServerHandler extends AbstractHandler {
 		final ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(config));
 		connector.setPort(8080);
 		server.addConnector(connector);
-		server.setHandler(new ServerHandler());
+		server.setHandler(new ServerHandler(app));
 		server.start();
 	}
 }

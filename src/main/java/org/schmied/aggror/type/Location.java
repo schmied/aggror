@@ -46,8 +46,8 @@ public class Location {
 		return site == null || urlPathHash == null ? null : new Location(site, urlPathHash);
 	}
 
-	public static final Location valueOf(final ArticlePk articlePk) {
-		return valueOf(Aggror.app().sites.site(SitePk.valueOf(articlePk)), UrlPathHash.valueOf(articlePk));
+	public static final Location valueOf(final Sites sites, final ArticlePk articlePk) {
+		return valueOf(Aggror.app().sites.site(SitePk.valueOf(sites, articlePk)), UrlPathHash.valueOf(articlePk));
 	}
 
 	public static Location valueOf(final URL url) {

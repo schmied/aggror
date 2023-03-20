@@ -3,10 +3,7 @@ package org.schmied.aggror;
 import java.net.URL;
 import java.util.*;
 
-import org.schmied.aggror.type.ArticlePk;
 import org.schmied.app.App;
-
-import com.github.benmanes.caffeine.cache.*;
 
 public class Aggror extends App {
 
@@ -15,7 +12,7 @@ public class Aggror extends App {
 			final Aggror app = new Aggror();
 			final Article a = Article.valueOf(new URL(
 					"https://apnews.com/article/us-russia-china-ukraine-icc-putin-57774b3a58d6ec1c75c921f71d9ebe90?utm_source=homepage&utm_medium=TopNews&utm_campaign=position_01"));
-			System.out.println(">>>>>>>>>> " + a.path("png"));
+			System.out.println(">>>>>>>>>> " + a.path(app, "png"));
 		} catch (final Exception e) {
 			exit(1, e);
 		}
@@ -26,9 +23,8 @@ public class Aggror extends App {
 //	public static final float GOLDEN_RATIO_0 = 0.618033988749f;
 //	public static final float GOLDEN_RATIO_1 = 1.618033988749f;
 
-	private final Cache<ArticlePk, Article> articles;
-
 	public final Sites sites;
+	public final Articles articles;
 
 	public final SortedMap<String, Integer> tagPriorities;
 
@@ -49,6 +45,7 @@ public class Aggror extends App {
 		log.info("{}", tagPriorities);
 
 		sites = new Sites(this);
+		articles = new Articles();
 
 		/*
 		siteNames = new TreeMap<>();
@@ -65,11 +62,9 @@ public class Aggror extends App {
 		}
 		*/
 
-		articles = Caffeine.newBuilder().maximumSize(10000).build();
-
 		startScheduler();
 
-		ServerHandler.startServer();
+		ServerHandler.startServer(this);
 	}
 
 	public static Aggror app() {
@@ -107,6 +102,10 @@ public class Aggror extends App {
 
 	@Override
 	public void initDb() throws Exception {
+
+		// site
+		db.update("CREATE TABLE IF NOT EXISTS q (q_id BIGINT PRIMARY KEY, last_fetch INT NOT NULL)");
+		//db.update("CREATE INDEX IF NOT EXISTS site_name_idx ON site USING btree (name)");
 
 		// site
 		db.update("CREATE TABLE IF NOT EXISTS site (site_id SMALLSERIAL PRIMARY KEY, name TEXT)");

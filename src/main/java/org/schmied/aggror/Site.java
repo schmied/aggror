@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
-import org.schmied.aggror.type.SitePk;
+import org.schmied.aggror.type.*;
 import org.schmied.app.App;
 import org.slf4j.*;
 
@@ -18,19 +18,23 @@ public class Site implements Comparable<Site> {
 	private static final String SUBPROP_LANG = "lang";
 	private static final String SUBPROP_REGEX_MATCH = "regexMatch";
 	private static final String SUBPROP_REGEX_NOMATCH = "regexNoMatch";
+	private static final String SUBPROP_Q = "q";
 
 	private static final int MIN_ARTICLE_SIZE = 1000;
 
 	// ---
 
 	public final SitePk pk;
+	public final Q q;
 	public final String name, language;
 	public final SortedMap<String, Pattern> regexMatchs, regexNoMatchs;
 	public final SortedSet<String> startPages;
 
-	private Site(final String name, final SortedMap<String, String> subProps) throws Exception {
+	private Site(final Aggror app, final String name, final SortedMap<String, String> subProps) throws Exception {
 		this.name = name;
-		this.pk = SitePk.create(this.name);
+		this.pk = SitePk.create(app, this.name);
+		this.q = Q.valueOf(subProps.get(SUBPROP_Q).trim());
+		System.out.println(">>>>>>>> " + q.toString() + " " + q.path(app).toAbsolutePath().toString());
 		this.language = subProps.get(SUBPROP_LANG).trim();
 		this.startPages = new TreeSet<>();
 		this.startPages.add("https://" + this.name + "/");
@@ -68,7 +72,8 @@ public class Site implements Comparable<Site> {
 				regexNoMatchs.keySet().toArray());
 	}
 
-	public static SortedSet<Site> sites(final SortedMap<String, String> props) throws Exception {
+	public static SortedSet<Site> sites(final Aggror app) throws Exception {
+		final SortedMap<String, String> props = app.prop.getMapOfString("site");
 		final SortedMap<String, SortedMap<String, String>> subPropsBySite = new TreeMap<>();
 		for (final String key : props.keySet()) {
 			final int idx = key.lastIndexOf('.');
@@ -83,7 +88,7 @@ public class Site implements Comparable<Site> {
 		}
 		final SortedSet<Site> sites = new TreeSet<>();
 		for (final String site : subPropsBySite.keySet())
-			sites.add(new Site(site, subPropsBySite.get(site)));
+			sites.add(new Site(app, site, subPropsBySite.get(site)));
 		return sites;
 	}
 
@@ -105,6 +110,8 @@ public class Site implements Comparable<Site> {
 		sb.append(pk.toString());
 		sb.append(':');
 		sb.append(name);
+		sb.append(":Q");
+		sb.append(q.toString());
 		return sb.toString();
 	}
 
@@ -442,7 +449,7 @@ public class Site implements Comparable<Site> {
 			LOGGER.warn(url.toString() + ": " + e.getMessage());
 		}
 	}
-	
+
 	public List<URL> download() throws Exception {
 		final SortedSet<String> articleUrls = new TreeSet<>();
 		final SortedSet<String> visited = new TreeSet<>();

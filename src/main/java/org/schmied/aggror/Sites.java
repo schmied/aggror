@@ -15,7 +15,7 @@ public class Sites {
 	private final SitePk[] sitePks;
 
 	public Sites(final Aggror app) throws Exception {
-		sites = Site.sites(app.prop.getMapOfString("site"));
+		sites = Site.sites(app);
 		sitesByPk = new HashMap<>();
 		sitesByName = new TreeMap<>();
 		sitePks = new SitePk[sites.size() + 10];

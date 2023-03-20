@@ -28,15 +28,15 @@ public class AggrorTest {
 				new BigInteger(apk.time().toString(), 16));
 
 		assertEquals(new BigInteger(sitePk, 16), //
-				new BigInteger(apk.sitePk().toString(), 16));
+				new BigInteger(apk.sitePk(null).toString(), 16));
 
 		assertEquals(new BigInteger(urlPathHash, 16), //
 				new BigInteger(apk.urlPathHash().toString(), 16));
 
-		final ArticlePk apk2 = ArticlePk.valueOf(apk.time().toString() + apk.sitePk().toString() + apk.urlPathHash());
+		final ArticlePk apk2 = ArticlePk.valueOf(apk.time().toString() + apk.sitePk(null).toString() + apk.urlPathHash());
 		assertEquals(apk, apk2);
 
-		LOGGER.info("2:  {} {} {} {}", apk.toString(), apk.time().toString(), apk.sitePk().toString(), apk.urlPathHash().toString());
+		LOGGER.info("2:  {} {} {} {}", apk.toString(), apk.time().toString(), apk.sitePk(null).toString(), apk.urlPathHash().toString());
 	}
 
 	@Test

@@ -33,8 +33,12 @@ public class Time extends IntOrderBase {
 
 	public Path path(final Path base) {
 		final String dirName1 = Integer.toHexString((value & 0x000f0000) >> 16);
-		final String dirName2 = Integer.toHexString((value & 0x0000ff00) >> 8);
-		final String dirName3 = Integer.toHexString(value & 0x000000ff);
+		String dirName2 = Integer.toHexString((value & 0x0000ff00) >> 8);
+		if (dirName2.length() == 1)
+			dirName2 = "0" + dirName2;
+		String dirName3 = Integer.toHexString(value & 0x000000ff);
+		if (dirName3.length() == 1)
+			dirName3 = "0" + dirName3;
 		return base.resolve(dirName1).resolve(dirName2).resolve(dirName3);
 	}
 
